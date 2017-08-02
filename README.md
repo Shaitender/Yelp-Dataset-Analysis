@@ -28,7 +28,7 @@ b.registerTempTable("business")
 
 ```
 
-![alt tag](http://url/to/img1.png)
+![screenshot](screenshots/Ques1_zepcode1.png)
 
 2. Rank all cities by # of stars descending, for each category
 
@@ -50,7 +50,7 @@ b.registerTempTable("business")
 
 ```
 
-![alt tag](http://url/to/img2.png)
+![screenshot](screenshots/Ques2_zepresult1.png)
 
 3. What is the average rank (# stars) for businesses within 10 miles of the University of Wisconsin - Madison, by type of business?
 >Center: University of Wisconsin - Madison
@@ -75,7 +75,7 @@ b.registerTempTable("business")
 
 ```
 
-![alt tag](http://url/to/img3.png)
+![screenshot](screenshots/Quest3_zepresult.png)
 
 4. Rank reviewers by number of reviews. For the top 10 reviewers, show their average number of stars, by category.
 
@@ -127,7 +127,7 @@ val resTable = spark.sql("select name,category, sum(stars) from user_review_busi
 
 ```
 
-![alt tag](http://url/to/img4.png)
+![screenshot](screenshots/Ques4_zepcode.png)
 
 5. For the top 10 and bottom 10 food business near UWM (in terms of stars), summarize star rating for reviews in January through May.
 
@@ -188,4 +188,4 @@ val avg_stars = spark.sql("select business_id, avg(stars) as avg_stars from join
 %sql select business_id, avg(stars) as avg_stars from jointotal group by business_id
 
 ```
-![alt tag](http://url/to/img5.png)
+![screenshot](screenshots/Ques1_zepcode1.png)
