@@ -23,7 +23,9 @@ val b = business.withColumn("category", explode(
     
 b.registerTempTable("business")
 ```
+
 #### Visualization
+
 ```markdown
 %sql SELECT city,category, SUM(review_count) AS total_review,FROM business group by category,city order by city
 
