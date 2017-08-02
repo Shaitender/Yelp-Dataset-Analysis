@@ -40,6 +40,7 @@ b.registerTempTable("business")
 	- Flatten the categories and cast as a string, ignore Null entries.
 	- Group the grabbed values by “city” and “categories” and do the average on “stars”.
 	- Rank the cities based on average # of stars in each category that were extracted.
+	
 ```scala
 import scala.collection.mutable.WrappedArray
 import spark.implicits._
@@ -94,7 +95,8 @@ b.registerTempTable("business")
 	- To do this, load “yelp_academic_dataset_business.json”, “yelp_academic_dataset_review.json” and “yelp_academic_dataset_user.json”.
 	- Order the user data by decreasing order of # of “review_count” and grab the first 10 values.
 	- Join action is used between all the three loaded data to grab the “user_id”, “categories” and “stars” for the top 10 user_id.
-	- Finally group the data with “user_id” and “categories” and ​ average of #stars for the grouped values.
+	- Finally group the data with “user_id” and “categories” and average of #stars for the grouped values.
+	
 ```scala
 import spark.implicits._
 import org.apache.spark.sql.functions._
@@ -151,6 +153,7 @@ val resTable = spark.sql("select name,category, sum(stars) from user_review_busi
 	- From review table “business_id”, “review_id”, “user_id”, “stars” and “date” were selected and GetMonth command was used to grab only Jan-May values.
 	- Collect the “stars”, “business_id” and “user_id” for the top and bottom “user_id’s”.
 	- Group everything by “business_id” and calculate the ​ average # of stars for all the “user_id”.
+	
 ```scala
 import org.apache.spark.sql.functions._
 import spark.implicits._
