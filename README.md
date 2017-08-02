@@ -9,7 +9,7 @@
 
 ### Analysis on Zeppelin
 1. Summarize the number of reviews by US city, by business category.
-```markdown
+```
 import scala.collection.mutable.WrappedArray
 import spark.implicits._
 import org.apache.spark.sql.functions._
@@ -26,7 +26,7 @@ b.registerTempTable("business")
 
 #### Visualization
 
-```markdown
+```
 %sql SELECT city,category, SUM(review_count) AS total_review,FROM business group by category,city order by city
 
 ```
@@ -80,6 +80,7 @@ b.registerTempTable("business")
 
 ```
 ![alt tag](http://url/to/img3.png)
+
 4. Rank reviewers by number of reviews. For the top 10 reviewers, show their average number of stars, by category.
 ```markdown
 import spark.implicits._
