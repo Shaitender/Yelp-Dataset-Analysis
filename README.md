@@ -9,6 +9,7 @@
 
 ### Analysis on Zeppelin
 1. Summarize the number of reviews by US city, by business category.
+
 ```scala
 import scala.collection.mutable.WrappedArray
 import spark.implicits._
@@ -26,6 +27,7 @@ b.registerTempTable("business")
 %sql SELECT city,category, SUM(review_count) AS total_review,FROM business group by category,city order by city
 
 ```
+
 ![alt tag](http://url/to/img1.png)
 
 2. Rank all cities by # of stars descending, for each category
@@ -47,6 +49,7 @@ b.registerTempTable("business")
 %sql SELECT  category,city,avg(stars) as avg_stars from business group by category,city order by category asc, avg_stars desc;
 
 ```
+
 ![alt tag](http://url/to/img2.png)
 
 3. What is the average rank (# stars) for businesses within 10 miles of the University of Wisconsin - Madison, by type of business?
@@ -71,6 +74,7 @@ b.registerTempTable("business")
 %sql Select category, avg(stars) as avg_star from business where latitude < 43.22145313 AND longitude < -89.21487592 AND latitude > 42.93172719 AND longitude > -89.61009908 group by category order by category;
 
 ```
+
 ![alt tag](http://url/to/img3.png)
 
 4. Rank reviewers by number of reviews. For the top 10 reviewers, show their average number of stars, by category.
@@ -120,7 +124,9 @@ user_review_business.registerTempTable("user_review_business")
 val resTable = spark.sql("select name,category, sum(stars) from user_review_business group by name,category")
 
 %sql select name, category, sum(stars) from user_review_business group by name,category
+
 ```
+
 ![alt tag](http://url/to/img4.png)
 
 5. For the top 10 and bottom 10 food business near UWM (in terms of stars), summarize star rating for reviews in January through May.
