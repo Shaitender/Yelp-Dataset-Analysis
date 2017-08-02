@@ -23,6 +23,7 @@ val b = business.withColumn("category", explode(
     
 b.registerTempTable("business")
 ```
+
 #### Visualization
 ```
 %sql SELECT city,category, SUM(review_count) AS total_review,FROM business group by category,city order by city
@@ -44,6 +45,7 @@ val b = business.withColumn("category", explode(
     ))
     
 b.registerTempTable("business")
+
 ```
 #### Visualization
 ```
@@ -122,6 +124,7 @@ user_review_business.registerTempTable("user_review_business")
 
 val resTable = spark.sql("select name,category, sum(stars) from user_review_business group by name,category")
 ```
+
 #### Visualization
 ```
 %sql select name, category, sum(stars) from user_review_business group by name,category
@@ -129,7 +132,7 @@ val resTable = spark.sql("select name,category, sum(stars) from user_review_busi
 ![alt tag](http://url/to/img4.png)
 
 5. For the top 10 and bottom 10 food business near UWM (in terms of stars), summarize star rating for reviews in January through May.
-```
+```scala
 import org.apache.spark.sql.functions._
 import spark.implicits._
 
@@ -184,6 +187,7 @@ jointotal.registerTempTable("jointotal")
 val avg_stars = spark.sql("select business_id, avg(stars) as avg_stars from jointotal group by business_id")
 
 ```
+
 #### Visualization
 ```
 %sql select business_id, avg(stars) as avg_stars from jointotal group by business_id
