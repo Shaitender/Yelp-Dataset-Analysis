@@ -1,14 +1,15 @@
-![New York University](https://upload.wikimedia.org/wikipedia/en/thumb/5/58/NYU_logo.svg/1280px-NYU_logo.svg.png)
-## Yelp Dataset Challenge
+## Big Data Analysis and Visualization
+Gathering useful insights from the Dataset using interactive tool **Apache Zeppelin**. This tool provides an integrated platform to have a Web-based notebook that enables data-driven, interactive data analytics and collaborative documents with SQL, Scala etc. 
+I am running zeppelin locally on docker by following these [instructions](https://github.com/dylanmei/docker-zeppelin). I pulled all the JSON files into HDFS for easy access.
 
-### About the Data
+### About the Yelp Dataset
 - 4.1M reviews and 947K tips by 1M users for 144K businesses
 - 1.1M business attributes, e.g., hours, parking availability, ambience.
 - Aggregated check-ins over time for each of the 125K businesses
 - 200,000 pictures from the included businesses
 
 ### Analysis on Zeppelin
-1. Summarize the number of reviews by US city, by business category.
+- Summarize the number of reviews by US city, by business category.
 
 ```scala
 import scala.collection.mutable.WrappedArray
@@ -30,7 +31,7 @@ b.registerTempTable("business")
 
 ![screenshot](screenshots/Ques1_zepcode1.png)
 
-2. Rank all cities by # of stars descending, for each category
+- Rank all cities by # of stars descending, for each category
 
 ```scala
 import scala.collection.mutable.WrappedArray
@@ -52,7 +53,7 @@ b.registerTempTable("business")
 
 ![screenshot](screenshots/Ques2_zepresult1.png)
 
-3. What is the average rank (# stars) for businesses within 10 miles of the University of Wisconsin - Madison, by type of business?
+- What is the average rank (# stars) for businesses within 10 miles of the University of Wisconsin - Madison, by type of business?
 >Center: University of Wisconsin - Madison
 >Latitude: 43 04’ 30” N, Longitude: 89 25’ 2” W
 >Decimal Degrees: Latitude: 43.0766, Longitude: -89.4125
@@ -77,7 +78,7 @@ b.registerTempTable("business")
 
 ![screenshot](screenshots/Quest3_zepresult.png)
 
-4. Rank reviewers by number of reviews. For the top 10 reviewers, show their average number of stars, by category.
+- Rank reviewers by number of reviews. For the top 10 reviewers, show their average number of stars, by category.
 
 ```scala
 import spark.implicits._
@@ -129,7 +130,7 @@ val resTable = spark.sql("select name,category, sum(stars) from user_review_busi
 
 ![screenshot](screenshots/Ques4_zepcode.png)
 
-5. For the top 10 and bottom 10 food business near UWM (in terms of stars), summarize star rating for reviews in January through May.
+- For the top 10 and bottom 10 food business near UWM (in terms of stars), summarize star rating for reviews in January through May.
 
 ```scala
 import org.apache.spark.sql.functions._
@@ -189,3 +190,5 @@ val avg_stars = spark.sql("select business_id, avg(stars) as avg_stars from join
 
 ```
 ![screenshot](screenshots/Ques1_zepcode1.png)
+
+My [repo](https://github.com/shaivikochar/YelpDataset) also have PIG scripts for these analysis. 
