@@ -10,7 +10,10 @@ I am running zeppelin locally on docker by following these [instructions](https:
 
 ### Analysis on Zeppelin
 - Summarize the number of reviews by US city, by business category.
-
+	- To do this, first load “yelp_academic_dataset_business.json” and collect “review_id”, “city” and “categories”. 
+	- Flatten the categories from array of strings to multiple strings. 
+	- Group the grabbed values by “city” and “categories” and count the number “review_count”. Order it by city only to get # of reviews by US city.
+	- Use `%sql` command to generate the visualizations.
 ```scala
 import scala.collection.mutable.WrappedArray
 import spark.implicits._
@@ -32,7 +35,10 @@ b.registerTempTable("business")
 ![screenshot](screenshots/Ques1_zepcode1.png)
 
 - Rank all cities by # of stars descending, for each category
-
+	- To do this, first load “yelp_academic_dataset_business.json” and collect “stars”, “city” and “categories”.
+	- Flatten the categories and cast as a string, ignore Null entries.
+	- Group the grabbed values by “city” and “categories” and do the average on “stars”.
+	- Rank the cities based on average # of stars in each category that were extracted.
 ```scala
 import scala.collection.mutable.WrappedArray
 import spark.implicits._
@@ -54,11 +60,16 @@ b.registerTempTable("business")
 ![screenshot](screenshots/Ques2_zepresult1.png)
 
 - What is the average rank (# stars) for businesses within 10 miles of the University of Wisconsin - Madison, by type of business?
->Center: University of Wisconsin - Madison
->Latitude: 43 04’ 30” N, Longitude: 89 25’ 2” W
->Decimal Degrees: Latitude: 43.0766, Longitude: -89.4125
->The bounding box for this problem is ~10 miles, which we will loosely define as 10 minutes. So the bounding box is a square box, 20 minutes long each side (of longitude and latitude), with UWM at the center.
+	>Center: University of Wisconsin - Madison
+	>Latitude: 43 04’ 30” N, Longitude: 89 25’ 2” W
+	>Decimal Degrees: Latitude: 43.0766, Longitude: -89.4125
+	>The bounding box for this problem is ~10 miles, which we will loosely define as 10 minutes. So the bounding box is a square box, 20 minutes long each side (of longitude and latitude), with UWM at the center.
 
+	- To do this, first load “yelp_academic_dataset_business.json” and collect “stars”, “categories”, “latitude”, “longitude”. For latitude, longitude explicit casting of float and double value was done to bypass the error of Type cast problem. 
+	- Flatten the categories, cast it as string, ignore NULL entries.
+	- Calculated the 10 miles distance around the university using google distance measure feature and filtered the data for the specified bounds inside the `%sql` command.
+	- Grouping was used to collect data for each category and then, average # of stars were generated.
+	
 ```scala
 import scala.collection.mutable.WrappedArray
 import spark.implicits._
@@ -79,7 +90,10 @@ b.registerTempTable("business")
 ![screenshot](screenshots/Quest3_zepresult.png)
 
 - Rank reviewers by number of reviews. For the top 10 reviewers, show their average number of stars, by category.
-
+	- To do this, load “yelp_academic_dataset_business.json”, “yelp_academic_dataset_review.json” and “yelp_academic_dataset_user.json”.
+	- Order the user data by decreasing order of # of “review_count” and grab the first 10 values.
+	- Join action is used between all the three loaded data to grab the “user_id”, “categories” and “stars” for the top 10 user_id.
+	- Finally group the data with “user_id” and “categories” and ​ average of #stars for the grouped values.
 ```scala
 import spark.implicits._
 import org.apache.spark.sql.functions._
@@ -131,7 +145,11 @@ val resTable = spark.sql("select name,category, sum(stars) from user_review_busi
 ![screenshot](screenshots/Ques4_zepcode.png)
 
 - For the top 10 and bottom 10 food business near UWM (in terms of stars), summarize star rating for reviews in January through May.
-
+	- To do this, data files are “yelp_academic_dataset_business.json”, “yelp_academic_dataset_review.json”.
+	- Based on Question 3 results for the bounded lat long values, filter only FOOD categories and grab top and bottom 10 values using, limit desc and, limit asc commands.
+	- From review table “business_id”, “review_id”, “user_id”, “stars” and “date” were selected and GetMonth command was used to grab only Jan-May values.
+	- Collect the “stars”, “business_id” and “user_id” for the top and bottom “user_id’s”.
+	- Group everything by “business_id” and calculate the ​ average # of stars for all the “user_id”.
 ```scala
 import org.apache.spark.sql.functions._
 import spark.implicits._
