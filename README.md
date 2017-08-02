@@ -14,6 +14,7 @@ I am running zeppelin locally on docker by following these [instructions](https:
 	- Flatten the categories from array of strings to multiple strings. 
 	- Group the grabbed values by “city” and “categories” and count the number “review_count”. Order it by city only to get # of reviews by US city.
 	- Use `%sql` command to generate the visualizations.
+	
 ```scala
 import scala.collection.mutable.WrappedArray
 import spark.implicits._
