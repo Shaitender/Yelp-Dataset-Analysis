@@ -9,7 +9,7 @@
 
 ### Analysis on Zeppelin
 1. Summarize the number of reviews by US city, by business category.
-```
+```scala
 import scala.collection.mutable.WrappedArray
 import spark.implicits._
 import org.apache.spark.sql.functions._
@@ -22,18 +22,15 @@ val b = business.withColumn("category", explode(
     ))
     
 b.registerTempTable("business")
-```
 
-#### Visualization
-
-```
 %sql SELECT city,category, SUM(review_count) AS total_review,FROM business group by category,city order by city
 
 ```
 ![alt tag](http://url/to/img1.png)
 
 2. Rank all cities by # of stars descending, for each category
-```markdown
+
+```scala
 import scala.collection.mutable.WrappedArray
 import spark.implicits._
 import org.apache.spark.sql.functions._
@@ -47,9 +44,6 @@ val b = business.withColumn("category", explode(
     
 b.registerTempTable("business")
 
-```
-#### Visualization
-```markdown
 %sql SELECT  category,city,avg(stars) as avg_stars from business group by category,city order by category asc, avg_stars desc;
 
 ```
@@ -60,7 +54,8 @@ b.registerTempTable("business")
 >Latitude: 43 04’ 30” N, Longitude: 89 25’ 2” W
 >Decimal Degrees: Latitude: 43.0766, Longitude: -89.4125
 >The bounding box for this problem is ~10 miles, which we will loosely define as 10 minutes. So the bounding box is a square box, 20 minutes long each side (of longitude and latitude), with UWM at the center.
-```markdown
+
+```scala
 import scala.collection.mutable.WrappedArray
 import spark.implicits._
 import org.apache.spark.sql.functions._
@@ -73,16 +68,14 @@ val b = business.withColumn("category", explode(
     ))
     
 b.registerTempTable("business")
-```
-#### Visualization
-```markdown
 %sql Select category, avg(stars) as avg_star from business where latitude < 43.22145313 AND longitude < -89.21487592 AND latitude > 42.93172719 AND longitude > -89.61009908 group by category order by category;
 
 ```
 ![alt tag](http://url/to/img3.png)
 
 4. Rank reviewers by number of reviews. For the top 10 reviewers, show their average number of stars, by category.
-```markdown
+
+```scala
 import spark.implicits._
 import org.apache.spark.sql.functions._
 
@@ -125,15 +118,14 @@ val user_review_business = spark.sql("select user_review.business_id,user_review
 user_review_business.registerTempTable("user_review_business")
 
 val resTable = spark.sql("select name,category, sum(stars) from user_review_business group by name,category")
-```
-#### Visualization
-```markdown
+
 %sql select name, category, sum(stars) from user_review_business group by name,category
 ```
 ![alt tag](http://url/to/img4.png)
 
 5. For the top 10 and bottom 10 food business near UWM (in terms of stars), summarize star rating for reviews in January through May.
-```markdown
+
+```scala
 import org.apache.spark.sql.functions._
 import spark.implicits._
 
@@ -187,9 +179,6 @@ jointotal.registerTempTable("jointotal")
 
 val avg_stars = spark.sql("select business_id, avg(stars) as avg_stars from jointotal group by business_id")
 
-```
-#### Visualization
-```markdown
 %sql select business_id, avg(stars) as avg_stars from jointotal group by business_id
 
 ```
