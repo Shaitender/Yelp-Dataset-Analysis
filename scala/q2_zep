@@ -1,0 +1,14 @@
+import scala.collection.mutable.WrappedArray
+import spark.implicits._
+import org.apache.spark.sql.functions._
+
+val business = spark.read.json("/usr/shaivi/Sem2/BigData/Assignment2/yelp_dataset_challenge_round9/yelp_academic_dataset_business.json")
+ 
+val b = business.withColumn("category", explode(
+    when(col("categories").isNotNull, col("categories"))
+    .otherwise(array(lit(null).cast("string")))
+    ))
+    
+b.registerTempTable("business")
+
+%sql SELECT  category,city,avg(stars) as avg_stars from business group by category,city order by category asc, avg_stars desc;

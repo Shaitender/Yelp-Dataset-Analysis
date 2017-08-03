@@ -1,0 +1,99 @@
+import spark.implicits._
+import org.apache.spark.sql.functions._
+
+val spark = new org.apache.spark.sql.SQLContext(sc)
+
+val user_data = spark.read.json("/usr/shaivi/Sem2/BigData/Assignment2/yelp_dataset_challenge_round9/yelp_academic_dataset_user.json")
+
+val user_attributes = user.select("user_id","name","review_count")
+
+user_attributes.registerTempTable("user");
+
+val user_attributes_sorted = spark.sql("select * from user order by review_count desc");
+
+val top10 = user_attributes_sorted.limit(10);
+
+top10.registerTempTable("top10");
+
+top10.show;
+
+val reviews_data = spark.read.json("/usr/shaivi/Sem2/BigData/Assignment2/yelp_dataset_challenge_round9/yelp_academic_dataset_review.json")
+
+val review_attributes = reviews_data.select("user_id","business_id","stars")
+
+review_attributes.registerTempTable("review");
+
+val user_review = spark.sql("select top10.user_id, top10.name, top10.review_count, review.business_id, review.stars from top10 JOIN review on top10.user_id=review.user_id")
+
+user_review.registerTempTable("user_review")
+
+val business_data = spark.read.json("/usr/shaivi/Sem2/BigData/Assignment2/yelp_dataset_challenge_round9/yelp_academic_dataset_business.json")
+
+val b = business.withColumn("category", explode(
+    when(col("categories").isNotNull, col("categories"))
+    .otherwise(array(lit(null).cast("string")))
+    ))
+
+val business_attributes = b.select("business_id","category");
+business_attributes.registerTempTable("business");
+
+val user_review_business = spark.sql("select user_review.business_id,user_review.name,user_review.stars,business.category from user_review JOIN business on user_review.business_id = business.business_id");
+
+user_review_business.registerTempTable("user_review_business")
+
+val resTable = spark.sql("select name,category, sum(stars) from user_review_business group by name,category")
+
+%sql select name,category, sum(stars) from user_review_business group by name,category
+
+
+
+
+import org.apache.spark.sql.functions._
+import spark.implicits._
+
+val spark = new org.apache.spark.sql.SQLContext(sc)
+
+val business_data = spark.read.json("/usr/shaivi/Sem2/BigData/Assignment2/yelp_dataset_challenge_round9/yelp_academic_dataset_business.json")
+
+val b = business_data.withColumn("category", explode(
+    when(col("categories").isNotNull, col("categories"))
+    .otherwise(array(lit(null).cast("string")))
+    ))
+
+// b.show()
+    
+b.registerTempTable("business")
+
+val catlatlong = spark.sql("select business_id,name,categories, stars from business where latitude >= 42.908333 AND latitude <= 43.241667 AND longitude >= -89.583889 AND longitude <= -89.250556 AND category == 'Food'");
+
+catlatlong.show()
+
+val catflat = catlatlong.withColumn("category", explode(
+    when(col("categories").isNotNull, col("categories"))
+    .otherwise(array(lit(null).cast("string")))
+    ))
+
+catflat.registerTempTable("catflat")	
+	
+val topstars = spark.sql("select business_id,name,category, stars from catflat order by stars desc limit 10")
+
+val bottomstars = sparksql("select business_id,name,category, stars from catflat order by stars asc limit 10")
+
+topstars.show()
+
+val review_data = spark.read.json("/usr/shaivi/Sem2/BigData/Assignment2/yelp_dataset_challenge_round9/yelp_academic_dataset_review.json")
+
+review_data.registerTempTable("review")
+
+val filterdate = spark.sql("select business_id,date,stars from review where month(date)>=1 and month(date)<=5")
+
+filterdate.registerTempTable("filterdate")
+
+val joinedTableTop = spark.sql("select topstars.name,topstars.category, filterdate.date, filterdate.stars from top10 JOIN filterdate on topstars.business_id = filterdate.business_id")
+
+val joinedTableBottom = spark.sql("select bottomstars.name, bottomstars.category, filterdate.date, filterdate.stars from bottomstars JOIN filterdate on bottomstars.business_id = filterdate.business_id")
+
+val avg_stars = 
+
+
+

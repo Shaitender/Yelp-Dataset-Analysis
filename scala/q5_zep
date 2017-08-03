@@ -1,0 +1,64 @@
+import org.apache.spark.sql.functions._
+import spark.implicits._
+
+val spark = new org.apache.spark.sql.SQLContext(sc)
+
+val business_data = spark.read.json("/usr/shaivi/Sem2/BigData/Assignment2/yelp_dataset_challenge_round9/yelp_academic_dataset_business.json")
+
+val b = business_data.withColumn("category", explode(
+    when(col("categories").isNotNull, col("categories"))
+    .otherwise(array(lit(null).cast("string")))
+    ))
+
+// b.show()
+    
+b.registerTempTable("business")
+
+val catlatlong = spark.sql("select business_id,name,categories, stars from business where latitude >= 42.908333 AND latitude <= 43.241667 AND longitude >= -89.583889 AND longitude <= -89.250556 AND category == 'Food'");
+
+catlatlong.show()
+
+val catflat = catlatlong.withColumn("category", explode(
+    when(col("categories").isNotNull, col("categories"))
+    .otherwise(array(lit(null).cast("string")))
+    ))
+
+catflat.registerTempTable("catflat")	
+	
+val topstars = spark.sql("select business_id,name,category, stars from catflat order by stars desc limit 10")
+
+val bottomstars = spark.sql("select business_id,name,category, stars from catflat order by stars asc limit 10")
+
+topstars.registerTempTable("topstars")
+
+bottomstars.registerTempTable("bottomstars")
+
+topstars.show()
+
+val review_data = spark.read.json("/usr/shaivi/Sem2/BigData/Assignment2/yelp_dataset_challenge_round9/yelp_academic_dataset_review.json")
+
+review_data.registerTempTable("review")
+
+val filterdate = spark.sql("select business_id,date,stars from review where month(date)>=1 and month(date)<=5")
+
+filterdate.registerTempTable("filterdate")
+
+val joinedTableTop = spark.sql("select topstars.name,topstars.category, topstars.business_id, filterdate.date, filterdate.stars from topstars INNER JOIN filterdate on topstars.business_id = filterdate.business_id")
+
+val joinedTableBottom = spark.sql("select bottomstars.name, bottomstars.category, bottomstars.business_id, filterdate.date, filterdate.stars from bottomstars INNER JOIN filterdate on bottomstars.business_id = filterdate.business_id")
+
+joinedTableTop.registerTempTable("joinedTableTop")
+
+joinedTableBottom.registerTempTable("joinedTableBottom")
+
+val jointotal = spark.sql("Select * from joinedTableTop as topfull union Select * from joinedTableBottom as bottomfull")
+
+jointotal.show()
+
+jointotal.registerTempTable("jointotal")
+
+val avg_stars = spark.sql("select business_id, avg(stars) as avg_stars from jointotal group by business_id")
+
+avg_stars.show()
+
+%sql select business_id, avg(stars) as avg_stars from jointotal group by business_id
