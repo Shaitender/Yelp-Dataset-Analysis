@@ -1,1 +1,2 @@
-## This is testing
+## Yelp Dataset Analysis
+[This](https://shaivikochar.github.io/Yelp-Dataset-Analysis/zeppelin) blog contains data analysis using Scala on Zeppelin along with Zeppelin Interactive Visualizations.
